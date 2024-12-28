@@ -1,0 +1,39 @@
+{
+  "name": "C Development Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "formulahendry.code-runner",
+        "ms-vscode.cmake-tools",
+        "ajshort.include-autocomplete",
+        "matepek.vscode-catch2-test-adapter",
+        "VisualStudioExptTeam.vscodeintellicode",
+        "twxs.cmake",
+        "streetsidesoftware.code-spell-checker",
+        "cschlosser.doxdocgen",
+        "eamodio.gitlens",
+        "jbenden.c-cpp-flylint",
+        "usernamehw.errorlens",
+        "MS-CEINTL.vscode-language-pack-ja",
+        "oderwat.indent-rainbow",
+        "mechatroner.rainbow-csv",
+        "esbenp.prettier-vscode",
+        "aaron-bond.better-comments",
+        "mosapride.zenkaku",
+        "christian-kohler.path-intellisense",
+        "streetsidesoftware.code-spell-checker",
+        "shardulm94.trailing-spaces",
+        "donjayamanne.githistory",
+        "mhutchie.git-graph",
+        "ms-vsliveshare.vsliveshare",
+        "GitHub.github-vscode-theme",
+        "wayou.vscode-todo-highlight"
+      ]
+    }
+  },
+  "remoteUser": "root"
+}
