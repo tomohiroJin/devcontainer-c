@@ -5,23 +5,6 @@
   },
   "customizations": {
     "vscode": {
-      "settings": {
-        "c-cpp-flylint.flexelint.enable": false, // Flexelint を無効化
-        "c-cpp-flylint.cppcheck.enable": true, // CppCheck を有効化
-        "c-cpp-flylint.cppcheck.path": "/usr/bin/cppcheck", // CppCheck のパス
-        "c-cpp-flylint.clang.enable": true,
-        "c-cpp-flylint.lizard.enable": true,
-        "c-cpp-flylint.lizard.path": "/usr/local/bin/lizard", // Lizard のパス
-        "c-cpp-flylint.flawfinder.enable": true,
-        "c-cpp-flylint.flawfinder.path": "/usr/local/bin/flawfinder", // FlawFinder のパス
-        "c-cpp-flylint.includePaths": [
-          "/usr/include",
-          "/usr/include/gtest",
-          "/usr/include/boost",
-          "${workspaceFolder}/src",
-          "${workspaceFolder}/tests"
-        ]
-      },
       "extensions": [
         "ms-vscode.cpptools",
         "formulahendry.code-runner",
