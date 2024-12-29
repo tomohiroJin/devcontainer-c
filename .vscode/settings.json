@@ -1,0 +1,17 @@
+{
+  "cSpell.words": ["ctest", "DCMAKE", "googletest", "GTEST"],
+  "c-cpp-flylint.flexelint.enable": false, // Flexelint を無効化
+  "c-cpp-flylint.cppcheck.enable": false, // CppCheck を無効化
+  // "c-cpp-flylint.cppcheck.path": "/usr/bin/cppcheck", // CppCheck のパス
+  "c-cpp-flylint.clang.enable": false,
+  "c-cpp-flylint.lizard.enable": true,
+  "c-cpp-flylint.flawfinder.enable": true,
+  "c-cpp-flylint.includePaths": [
+    "/usr/include",
+    "/usr/include/gtest",
+    "/usr/include/boost",
+    "${workspaceFolder}/*"
+  ],
+  "C_Cpp.default.compilerPath": "/usr/bin/clang++",
+  "C_Cpp.default.cppStandard": "c++17"
+}
