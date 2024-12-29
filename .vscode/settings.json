@@ -1,25 +1,17 @@
 {
   "cSpell.words": ["ctest", "DCMAKE", "googletest", "GTEST"],
   "c-cpp-flylint.flexelint.enable": false, // Flexelint を無効化
-  "c-cpp-flylint.cppcheck.enable": true, // CppCheck を無効化
-  "c-cpp-flylint.cppcheck.path": "/usr/bin/cppcheck", // CppCheck のパス
-  "c-cpp-flylint.clang.enable": true,
-  "c-cpp-flylint.clang.options": [
-    "-DGTEST_USE_OWN_TR1_TUPLE=0", // 必要に応じて適切なマクロを追加
-    "-I/usr/include/gtest", // GoogleTest のヘッダーパス
-    "--no-system-headers",
-    "-std=c++17"
-  ],
+  "c-cpp-flylint.cppcheck.enable": false, // CppCheck を無効化
+  // "c-cpp-flylint.cppcheck.path": "/usr/bin/cppcheck", // CppCheck のパス
+  "c-cpp-flylint.clang.enable": false,
   "c-cpp-flylint.lizard.enable": true,
-  "c-cpp-flylint.lizard.path": "/usr/local/bin/lizard", // Lizard のパス
   "c-cpp-flylint.flawfinder.enable": true,
-  "c-cpp-flylint.flawfinder.path": "/usr/local/bin/flawfinder", // FlawFinder のパス
   "c-cpp-flylint.includePaths": [
     "/usr/include",
     "/usr/include/gtest",
     "/usr/include/boost",
-    "${workspaceFolder}/src",
-    "${workspaceFolder}/tests"
+    "${workspaceFolder}/*"
   ],
-  "c-cpp-flylint.cppcheck.options": "--suppress=*:gtest/gtest.h"
+  "C_Cpp.default.compilerPath": "/usr/bin/clang++",
+  "C_Cpp.default.cppStandard": "c++17"
 }
