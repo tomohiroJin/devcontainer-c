@@ -62,3 +62,4 @@ target_link_libraries(my_app
 
 # テストの登録
 add_test(NAME MathTests COMMAND math_test)
+
