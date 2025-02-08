@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
-project(MyProject)
 
-# C++ 標準を指定
+project(BasicVariables)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -27,39 +27,27 @@ else()
     message(FATAL_ERROR "GoogleTest not found!")
 endif()
 
-# 実装用ライブラリ
-add_library(my_library
-    ${SRC_DIR}/math.cpp
-)
+# src をインクルードパスに追加
+include_directories(${SRC_DIR})
 
-# テストの設定
-enable_testing()
+# src 以下の全ての cpp ファイルを対象にする
+file(GLOB_RECURSE SRC_FILES ${SRC_DIR}/*.cpp)
+add_library(basic_variables ${SRC_FILES})
 
-# テスト実行可能ファイル
-add_executable(math_test
-    ${TEST_DIR}/math_test.cpp
-)
-
-# テストにライブラリと必要な依存関係をリンク
-target_link_libraries(math_test
-    my_library
-    ${GTEST_LIBRARIES}
-    gtest_main
-    pthread
-    ${Boost_LIBRARIES}
-)
+# tests 以下の全てのテスト cpp ファイルを対象にする
+file(GLOB_RECURSE TEST_FILES ${TEST_DIR}/*.cpp)
+foreach(TEST_FILE ${TEST_FILES})
+    get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
+    add_executable(${TEST_NAME} ${TEST_FILE})
+    target_link_libraries(${TEST_NAME} basic_variables ${GTEST_LIBRARIES} gtest_main pthread ${Boost_LIBRARIES})
+    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+endforeach()
 
 # 実行可能ファイルの追加 (オプション: 実装の確認用)
-add_executable(my_app
-    ${SRC_DIR}/main.cpp
-)
+file(GLOB_RECURSE EXEC_FILES ${SRC_DIR}/basic/main.cpp)
+if(EXEC_FILES)
+    add_executable(basic_app ${EXEC_FILES})
+    target_link_libraries(basic_app basic_variables ${Boost_LIBRARIES})
+endif()
 
-# 実行ファイルにライブラリと Boost をリンク
-target_link_libraries(my_app
-    my_library
-    ${Boost_LIBRARIES}
-)
-
-# テストの登録
-add_test(NAME MathTests COMMAND math_test)
-
+enable_testing()
