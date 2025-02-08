@@ -27,9 +27,6 @@ else()
     message(FATAL_ERROR "GoogleTest not found!")
 endif()
 
-# src をインクルードパスに追加
-include_directories(${SRC_DIR})
-
 # src 以下の全ての cpp ファイルを対象にする
 file(GLOB_RECURSE SRC_FILES ${SRC_DIR}/*.cpp)
 add_library(basic_variables ${SRC_FILES})
@@ -37,6 +34,7 @@ add_library(basic_variables ${SRC_FILES})
 # tests 以下の全てのテスト cpp ファイルを対象にする
 file(GLOB_RECURSE TEST_FILES ${TEST_DIR}/*.cpp)
 foreach(TEST_FILE ${TEST_FILES})
+    include_directories(${SRC_DIR})
     get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
     add_executable(${TEST_NAME} ${TEST_FILE})
     target_link_libraries(${TEST_NAME} basic_variables ${GTEST_LIBRARIES} gtest_main pthread ${Boost_LIBRARIES})
