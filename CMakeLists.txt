@@ -27,25 +27,30 @@ else()
     message(FATAL_ERROR "GoogleTest not found!")
 endif()
 
-# src 以下の全ての cpp ファイルを対象にする
+# src をインクルードパスに追加
+include_directories(${SRC_DIR})
+
+# src 以下の全ての cpp ファイルをライブラリに追加
 file(GLOB_RECURSE SRC_FILES ${SRC_DIR}/*.cpp)
 add_library(basic_variables ${SRC_FILES})
 
+# tests/main.cpp を作成する
+set(TEST_MAIN ${TEST_DIR}/main.cpp)
+file(WRITE ${TEST_MAIN} "
+#include <gtest/gtest.h>
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}")
+
 # tests 以下の全てのテスト cpp ファイルを対象にする
 file(GLOB_RECURSE TEST_FILES ${TEST_DIR}/*.cpp)
-foreach(TEST_FILE ${TEST_FILES})
-    include_directories(${SRC_DIR})
-    get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
-    add_executable(${TEST_NAME} ${TEST_FILE})
-    target_link_libraries(${TEST_NAME} basic_variables ${GTEST_LIBRARIES} gtest_main pthread ${Boost_LIBRARIES})
-    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
-endforeach()
 
-# 実行可能ファイルの追加 (オプション: 実装の確認用)
-file(GLOB_RECURSE EXEC_FILES ${SRC_DIR}/basic/main.cpp)
-if(EXEC_FILES)
-    add_executable(basic_app ${EXEC_FILES})
-    target_link_libraries(basic_app basic_variables ${Boost_LIBRARIES})
-endif()
+# テスト実行ファイルを作成
+add_executable(test_runner ${TEST_MAIN} ${TEST_FILES})
+target_link_libraries(test_runner PRIVATE basic_variables GTest::GTest GTest::Main pthread ${Boost_LIBRARIES})
 
+# CTest にテストを登録
 enable_testing()
+include(GoogleTest)
+gtest_discover_tests(test_runner)
