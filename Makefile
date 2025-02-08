@@ -1,9 +1,6 @@
 # ディレクトリ定義
 BUILD_DIR = build
 
-# デフォルトターゲット
-all: build
-
 # ビルドターゲット
 build:
 	mkdir -p $(BUILD_DIR)
@@ -18,5 +15,8 @@ test:
 clean:
 	rm -rf $(BUILD_DIR)
 
+# デフォルトターゲット
+all: clean build test
+
 # ビルドしてテストを実行
-bt: clean build test
+bt: build test
