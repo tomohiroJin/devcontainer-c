@@ -1,67 +1,80 @@
 # devcontainer-c
 
-`devcontainer-c` は、Visual Studio Code (VS Code) 上で C 言語の開発環境を構築するためのリポジトリです。このリポジトリには、Dev Container 機能を使用して、CMake、Google Test、Boost などのツールやライブラリが事前に設定されています。
+`devcontainer-c` は、Visual Studio Code (VS Code) 上で C++ の開発環境を構築するためのリポジトリです。  
+このリポジトリには、Dev Container 機能を使用して、CMake、Google Test、Boost などのツールやライブラリが事前に設定されています。
 
-## 特徴
+## **特徴**
 
 - **CMake のサポート**: ビルドシステムとして CMake を使用し、柔軟なビルド構成を提供します。
 - **Google Test の統合**: ユニットテストフレームワークとして Google Test を組み込み、テスト駆動開発をサポートします。
 - **Boost ライブラリの利用**: 高機能な C++ ライブラリである Boost をインストール済みで、さまざまな機能を簡単に利用できます。
 - **VS Code 拡張機能のプリインストール**: C/C++ 開発に役立つ拡張機能が事前にインストールされています。
 
-## セットアップ手順
+---
 
-1. **リポジトリのクローン**:
+## **セットアップ手順**
 
-   ```bash
-   git clone https://github.com/tomohiroJin/devcontainer-c.git
-   cd devcontainer-c
-   ```
+### **1. リポジトリのクローン**
 
-2. **VS Code でリポジトリを開く**:
+```bash
+git clone https://github.com/tomohiroJin/devcontainer-c.git
+cd devcontainer-c
+```
 
-   VS Code を起動し、`devcontainer-c` ディレクトリを開きます。
+### **2. VS Code でリポジトリを開く**
 
-3. **Dev Container のビルドと起動**:
+VS Code を起動し、`devcontainer-c` ディレクトリを開きます。
 
-   VS Code のコマンドパレット（`Ctrl+Shift+P` または `Cmd+Shift+P`）を開き、「Dev Containers: Reopen in Container」を選択します。これにより、定義された開発環境が構築され、コンテナ内でプロジェクトが開かれます。
+### **3. Dev Container のビルドと起動**
 
-## 使用方法
+VS Code のコマンドパレット（`Ctrl+Shift+P` または `Cmd+Shift+P`）を開き、「Dev Containers: Reopen in Container」を選択します。  
+これにより、定義された開発環境が構築され、コンテナ内でプロジェクトが開かれます。
 
-- **ビルド**:
+---
 
-  ターミナルで以下のコマンドを実行して、プロジェクトをビルドします。
+## **使用方法**
 
-  ```bash
-  make
-  ```
+### **🔹 ビルド**
 
-- **クリーンビルド**:
+以下のコマンドでプロジェクトをビルドできます。
 
-  以前のビルド成果物を削除し、再度ビルドを行う場合は、以下のコマンドを実行します。
+```bash
+make build
+```
 
-  ```bash
-  make clean
-  make
-  ```
+### **🔹 並列ビルド（高速化）**
 
-- **テストの実行**:
+```bash
+make -j4 build  # CPU に応じて `-j4` を `-j$(nproc)` に変更可能
+```
 
-  ビルド後、以下のコマンドでテストを実行できます。
+### **🔹 クリーンビルド**
 
-  ```bash
-  make test
-  ```
+以前のビルド成果物を削除し、再ビルドする場合は以下を実行してください。
 
-- **クリーンビルドしてテストの実行**:
+```bash
+make clean
+make build
+```
 
-  クリーン、ビルド、テストの順で実行できます。
+### **🔹 全テストの実行**
 
-  ```bash
-  make bt
-  ```
+```bash
+make test
+```
 
-## 依存関係
+### **🔹 特定のテストのみ実行**
+
+特定のテストを実行したい場合は、以下のように `TEST` 変数を指定します。
+
+```bash
+make test TEST=test_fizzbuzz  # FizzBuzz のテストのみ実行
+make test TEST=test_factory   # Factory のテストのみ実行
+```
+
+---
+
+## **依存関係**
 
 このプロジェクトは、以下のツールやライブラリに依存しています。
 
@@ -71,6 +84,8 @@
 
 これらは、Dev Container 内で自動的にインストールされます。
 
-## ライセンス
+---
+
+## **ライセンス**
 
 このプロジェクトは、MIT ライセンスの下で公開されています。詳細は、`LICENSE` ファイルをご覧ください。
