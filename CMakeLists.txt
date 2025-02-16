@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
-project(MyProject)
 
-# C++ 標準を指定
+project(BasicVariables)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -27,39 +27,30 @@ else()
     message(FATAL_ERROR "GoogleTest not found!")
 endif()
 
-# 実装用ライブラリ
-add_library(my_library
-    ${SRC_DIR}/math.cpp
-)
+# src をインクルードパスに追加
+include_directories(${SRC_DIR})
 
-# テストの設定
+# src 以下の全ての cpp ファイルをライブラリに追加
+file(GLOB_RECURSE SRC_FILES ${SRC_DIR}/*.cpp)
+add_library(basic_variables ${SRC_FILES})
+
+# tests/main.cpp を作成する
+set(TEST_MAIN ${TEST_DIR}/main.cpp)
+file(WRITE ${TEST_MAIN} "
+#include <gtest/gtest.h>
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}")
+
+# tests 以下の全てのテスト cpp ファイルを対象にする
+file(GLOB_RECURSE TEST_FILES ${TEST_DIR}/*.cpp)
+
+# テスト実行ファイルを作成
+add_executable(test_runner ${TEST_MAIN} ${TEST_FILES})
+target_link_libraries(test_runner PRIVATE basic_variables GTest::GTest GTest::Main pthread ${Boost_LIBRARIES})
+
+# CTest にテストを登録
 enable_testing()
-
-# テスト実行可能ファイル
-add_executable(math_test
-    ${TEST_DIR}/math_test.cpp
-)
-
-# テストにライブラリと必要な依存関係をリンク
-target_link_libraries(math_test
-    my_library
-    ${GTEST_LIBRARIES}
-    gtest_main
-    pthread
-    ${Boost_LIBRARIES}
-)
-
-# 実行可能ファイルの追加 (オプション: 実装の確認用)
-add_executable(my_app
-    ${SRC_DIR}/main.cpp
-)
-
-# 実行ファイルにライブラリと Boost をリンク
-target_link_libraries(my_app
-    my_library
-    ${Boost_LIBRARIES}
-)
-
-# テストの登録
-add_test(NAME MathTests COMMAND math_test)
-
+include(GoogleTest)
+gtest_discover_tests(test_runner)
