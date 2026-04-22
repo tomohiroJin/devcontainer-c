@@ -1,9 +1,10 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 
-project(BasicVariables)
+project(BasicVariables CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # ソースコードとテストコードのディレクトリ
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
@@ -31,20 +32,17 @@ endif()
 include_directories(${SRC_DIR})
 
 # src 以下の全ての cpp ファイルをライブラリに追加
+# NOTE: GLOB_RECURSE を使用しているため、ファイル追加・削除後は再度 cmake を実行すること
 file(GLOB_RECURSE SRC_FILES ${SRC_DIR}/*.cpp)
 add_library(basic_variables ${SRC_FILES})
 
-# tests/main.cpp を作成する
+# tests のエントリポイント（実ファイル。動的生成はしない）
 set(TEST_MAIN ${TEST_DIR}/main.cpp)
-file(WRITE ${TEST_MAIN} "
-#include <gtest/gtest.h>
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}")
 
 # tests 以下の全てのテスト cpp ファイルを対象にする
 file(GLOB_RECURSE TEST_FILES ${TEST_DIR}/*.cpp)
+# TEST_MAIN は add_executable 側でも追加するため二重追加を避けるためリストから除外
+list(REMOVE_ITEM TEST_FILES ${TEST_MAIN})
 
 # テスト実行ファイルを作成
 add_executable(test_runner ${TEST_MAIN} ${TEST_FILES})
