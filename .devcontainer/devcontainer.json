@@ -1,18 +1,25 @@
 {
-  "name": "C Development Container",
+  "name": "C++ Development Container",
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "username": "vscode",
+      "upgradePackages": false
+    },
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "remoteUser": "vscode",
+  "postCreateCommand": "cmake --version && clang++ --version && g++ --version",
   "customizations": {
     "vscode": {
       "extensions": [
+        "ms-vscode.cpptools-extension-pack",
         "ms-vscode.cpptools",
-        "formulahendry.code-runner",
         "ms-vscode.cmake-tools",
-        "ajshort.include-autocomplete",
-        "matepek.vscode-catch2-test-adapter",
+        "xaver.clang-format",
         "VisualStudioExptTeam.vscodeintellicode",
-        "twxs.cmake",
         "streetsidesoftware.code-spell-checker",
         "cschlosser.doxdocgen",
         "eamodio.gitlens",
@@ -21,19 +28,27 @@
         "MS-CEINTL.vscode-language-pack-ja",
         "oderwat.indent-rainbow",
         "mechatroner.rainbow-csv",
-        "esbenp.prettier-vscode",
         "aaron-bond.better-comments",
         "mosapride.zenkaku",
         "christian-kohler.path-intellisense",
-        "streetsidesoftware.code-spell-checker",
         "shardulm94.trailing-spaces",
         "donjayamanne.githistory",
         "mhutchie.git-graph",
         "ms-vsliveshare.vsliveshare",
         "GitHub.github-vscode-theme",
         "wayou.vscode-todo-highlight"
-      ]
+      ],
+      "settings": {
+        "C_Cpp.default.cppStandard": "c++20",
+        "C_Cpp.default.compilerPath": "/usr/bin/clang++",
+        "editor.formatOnSave": true,
+        "[cpp]": {
+          "editor.defaultFormatter": "xaver.clang-format"
+        },
+        "[c]": {
+          "editor.defaultFormatter": "xaver.clang-format"
+        }
+      }
     }
-  },
-  "remoteUser": "root"
+  }
 }

@@ -1,6 +1,5 @@
 {
   "cSpell.words": [
-    "ajshort",
     "CEINTL",
     "cppcheck",
     "cpptools",
@@ -13,21 +12,16 @@
     "dylib",
     "eamodio",
     "errorlens",
-    "esbenp",
     "Expt",
     "flawfinder",
     "flylint",
-    "formulahendry",
     "githistory",
     "googletest",
     "GTEST",
     "jbenden",
     "kohler",
     "libboost",
-    "libcairo",
-    "libgirepository",
     "libgtest",
-    "matepek",
     "mechatroner",
     "mhutchie",
     "Mkfile",
@@ -38,15 +32,13 @@
     "shardulm",
     "symvers",
     "tomohiro",
-    "twxs",
     "usernamehw",
     "vscodeintellicode",
     "wayou",
     "zenkaku"
   ],
-  "c-cpp-flylint.flexelint.enable": false, // Flexelint を無効化
-  "c-cpp-flylint.cppcheck.enable": false, // CppCheck を無効化
-  // "c-cpp-flylint.cppcheck.path": "/usr/bin/cppcheck", // CppCheck のパス
+  "c-cpp-flylint.flexelint.enable": false,
+  "c-cpp-flylint.cppcheck.enable": false,
   "c-cpp-flylint.clang.enable": false,
   "c-cpp-flylint.lizard.enable": true,
   "c-cpp-flylint.flawfinder.enable": true,
@@ -57,5 +49,12 @@
     "${workspaceFolder}/*"
   ],
   "C_Cpp.default.compilerPath": "/usr/bin/clang++",
-  "C_Cpp.default.cppStandard": "c++17"
+  "C_Cpp.default.cppStandard": "c++20",
+  "editor.formatOnSave": true,
+  "[cpp]": {
+    "editor.defaultFormatter": "xaver.clang-format"
+  },
+  "[c]": {
+    "editor.defaultFormatter": "xaver.clang-format"
+  }
 }

@@ -5,9 +5,13 @@
 
 ## **特徴**
 
-- **CMake のサポート**: ビルドシステムとして CMake を使用し、柔軟なビルド構成を提供します。
-- **Google Test の統合**: ユニットテストフレームワークとして Google Test を組み込み、テスト駆動開発をサポートします。
+- **Debian bookworm ベース**: OpenSSL 3.x を含む最新の安定パッケージ群で構成。
+- **C++20 対応ツールチェーン**: GCC 12 / Clang 16 をプリインストール。
+- **CMake のサポート**: ビルドシステムとして CMake (3.20 以上) を使用し、柔軟なビルド構成を提供します。
+- **Google Test の統合**: ユニットテストフレームワーク（v1.15.2 タグで固定）を組み込み、テスト駆動開発をサポートします。
 - **Boost ライブラリの利用**: 高機能な C++ ライブラリである Boost をインストール済みで、さまざまな機能を簡単に利用できます。
+- **clang-format / clang-tidy 同梱**: フォーマット・静的解析も標準で実行可能。
+- **非 root ユーザー (`vscode`) で起動**: devcontainer のベストプラクティスに準拠。`sudo` は NOPASSWD で利用可能。
 - **VS Code 拡張機能のプリインストール**: C/C++ 開発に役立つ拡張機能が事前にインストールされています。
 
 ---
@@ -78,9 +82,11 @@ make test TEST=test_factory   # Factory のテストのみ実行
 
 このプロジェクトは、以下のツールやライブラリに依存しています。
 
-- [CMake](https://cmake.org/): ビルドシステム
-- [Google Test](https://github.com/google/googletest): ユニットテストフレームワーク
+- [CMake](https://cmake.org/) 3.20 以上: ビルドシステム
+- [Google Test](https://github.com/google/googletest) v1.15.2: ユニットテストフレームワーク
 - [Boost](https://www.boost.org/): C++ ライブラリ
+- GCC 12 / Clang 16 (C++20 対応)
+- clang-format / clang-tidy / cppcheck / lizard / flawfinder（解析系ツール）
 
 これらは、Dev Container 内で自動的にインストールされます。
 
