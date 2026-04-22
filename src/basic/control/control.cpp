@@ -34,7 +34,7 @@ int sumWithForLoop(const std::vector<int> &numbers)
 int sumWithWhileLoop(const std::vector<int> &numbers)
 {
   int sum = 0;
-  size_t i = 0;
+  std::size_t i = 0;
   while (i < numbers.size())
   {
     sum += numbers[i];
@@ -49,7 +49,7 @@ int sumWithDoWhileLoop(const std::vector<int> &numbers)
   if (numbers.empty())
     return 0;
   int sum = 0;
-  size_t i = 0;
+  std::size_t i = 0;
   do
   {
     sum += numbers[i];
