@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM debian:trixie-slim
+FROM debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2
 
 ARG USERNAME=vscode
 ARG USER_UID=1000
@@ -14,7 +14,7 @@ RUN --mount=type=secret,id=proxy_ca \
     fi; \
     apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
       ca-certificates sudo build-essential gdb cmake ninja-build \
-      clang clang-format clang-tidy lldb git cppcheck \
+      clang clang-format clang-tidy git cppcheck \
       libssl-dev libgtest-dev libboost-dev curl pkg-config \
     && rm -rf /var/lib/apt/lists/* /etc/apt/apt.conf.d/99-build-ca
 

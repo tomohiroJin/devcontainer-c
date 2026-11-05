@@ -22,12 +22,7 @@ endif()
 
 # GoogleTest を検索
 find_package(GTest CONFIG REQUIRED)
-if(GTest_FOUND)
-    include_directories(${GTEST_INCLUDE_DIRS})
-    message(STATUS "GoogleTest found: ${GTEST_INCLUDE_DIRS}")
-else()
-    message(FATAL_ERROR "GoogleTest not found!")
-endif()
+message(STATUS "GoogleTest config: ${GTest_DIR}")
 
 # src をインクルードパスに追加
 include_directories(${SRC_DIR})

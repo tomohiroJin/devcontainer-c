@@ -4,22 +4,22 @@
 
 ## 実行結果
 
-- クリーンビルド成功。最終ローカル image ID: `sha256:2af72b92a7c16415a7dedc69cca4bee2cb4cf559bcb5f6de5f4663405b2693e2`。未公開のローカルイメージのため registry digest はない。
+- クリーンビルド成功。最終ローカル image ID: `sha256:7644ba54e40ac298cd16a77b7b346a0826b60955477cafe2ed7d64309fb604b0`。未公開のローカルイメージのため registry digest はない。
 - GCC 14.2.0 / Clang 19.1.7 の configure/build/CTest は各 50/50 成功。C++20 を維持。
 - CMake 3.31.6、cppcheck 2.17.1、GoogleTest Debian package 1.16.0-1、Boost 1.83、OpenSSL 3.5.7 系。
-- JSON/bash/YAML 構文、推奨拡張一覧の一致、git diff --check を確認。
-- `cppcheck --enable=warning,performance,portability --error-exitcode=1 --std=c++20 --suppress=missingIncludeSystem -Isrc src` は exit 1。既存の学習コードに `duplInheritedMember` 1件（ProfessorEH::setAge）、`returnByReference` 3件（getName/getSchool/getSubject）。環境更新で学習用 API の意味を変えないため記録のみとし、CI の失敗条件には加えていない。
+- JSON/bash/YAML 構文、推奨拡張一覧の一致、actionlint、git diff --check を確認。レビュー修正後も両コンパイラ各50件と README の FizzBuzz / Factory 選択各4件が成功し、0件マッチ時の CTest 失敗を確認。
+- 初回環境検証の `cppcheck --enable=warning,performance,portability --error-exitcode=1 --std=c++20 --suppress=missingIncludeSystem -Isrc src` は exit 1。既存の学習コードに `duplInheritedMember` 1件（ProfessorEH::setAge）、`returnByReference` 3件（getName/getSchool/getSubject）。環境更新で学習用 API の意味を変えないため記録のみとし、CI の失敗条件には加えていない。
 - VS Code GUI の補完・デバッグ・保存時整形と Dev Containers UI からの再オープンは本セッションでは未実施。直接 Docker build/run と両コンパイラの動作を検証済み。
 
 ## Trivy 監査
 
-Trivy 0.76.2、DB UpdatedAt `2026-11-05T13:09:41.435406326Z`。`trivy image --image-src docker --scanners vuln --skip-db-update --cache-dir /tmp/c-trivy-cache --format json --output /tmp/c-final-trivy.json devcontainer-c:issue6` を実行。OS Debian 13.7、239 package、言語固有 lockfile 0。C++ ライブラリは Debian package として検査される。
+Trivy 0.76.2、DB UpdatedAt `2026-11-05T13:09:41.435406326Z`。`trivy image --image-src docker --scanners vuln --skip-db-update --cache-dir /tmp/c-trivy-cache --format json --output /tmp/c-review-trivy.json devcontainer-c:review7` を実行。OS Debian 13.7、234 package、言語固有 lockfile 0。C++ ライブラリは Debian package として検査される。
 
-最終結果（package ごとの重複を含む）: CRITICAL 1, HIGH 113, LOW 960, MEDIUM 506, UNKNOWN 12。全深刻度で修正版が報告された検知は 0 件。修正版のある HIGH/CRITICAL は 0 件。HIGH/CRITICAL は 50 個の CVE に集約される。未修正はゼロではない。
+最終結果（package ごとの重複を含む）: CRITICAL 1, HIGH 112, LOW 950, MEDIUM 506, UNKNOWN 12。全深刻度で修正版が報告された検知は 0 件。修正版のある HIGH/CRITICAL は 0 件。HIGH/CRITICAL は 50 個の CVE に集約される。未修正はゼロではない。
 
-生 JSON の SHA256: `4a07256ff8583add152aebb83fdcee43f8779de116fbc6c8dcae597259e9bb56`。以後の CI は全件 JSON・package 一覧・image inspect を artifact として保存する。
+生 JSON の SHA256: `879904c0846827d7fc7b8831b7365f905d583c3512c45d3190783bb08abd3955`。CI は全件 JSON・package 一覧・image inspect を artifact として保存し、`scripts/summarize-vulnerabilities.py` で全深刻度の件数・修正版あり HIGH/CRITICAL 件数・イメージID・JSON SHA256 をログと Job Summary の両方へ出力する。監査時の重複を含む総件数は1581、全深刻度のユニークな CVE ID は615。
 
-全 Boost モジュールからヘッダー package に絞ったことで、HIGH は 134 → 113、CRITICAL は 2 → 1 に減少し、不要な OpenSSH client の CVE-2026-60002 を除去した。残存 CRITICAL の libxml2 は LLVM 系依存に含まれ、調査時の Debian/Trivy に修正版がない。
+初回の全 Boost モジュールからヘッダー package への変更時は HIGH 134 → 113、CRITICAL 2 → 1 となり、不要な OpenSSH client の CVE-2026-60002 を除去した。レビューで未使用の LLDB を外した最終像は234 package（239 → 234）、HIGH 112、CRITICAL 1。GDB が libpython3.13 に依存するため、LLDB 除去で Python 関連 CVE 全件を除去できるわけではない。残存 CRITICAL の libxml2 は LLVM 系依存に含まれ、調査時の Debian/Trivy に修正版がない。
 
 ## 残件の扱い
 
@@ -38,7 +38,7 @@ Trivy 0.76.2、DB UpdatedAt `2026-11-05T13:09:41.435406326Z`。`trivy image --im
 | [CVE-2024-21803](https://security-tracker.debian.org/tracker/CVE-2024-21803) | HIGH | linux-libc-dev | 修正版未提供 |
 | [CVE-2024-58015](https://security-tracker.debian.org/tracker/CVE-2024-58015) | HIGH | linux-libc-dev | 修正版未提供 |
 | [CVE-2025-40025](https://security-tracker.debian.org/tracker/CVE-2025-40025) | HIGH | linux-libc-dev | 修正版未提供 |
-| [CVE-2025-69720](https://security-tracker.debian.org/tracker/CVE-2025-69720) | HIGH | libncurses6, libncursesw6, libtinfo6, ncurses-base, ncurses-bin | 修正版未提供 |
+| [CVE-2025-69720](https://security-tracker.debian.org/tracker/CVE-2025-69720) | HIGH | libncursesw6, libtinfo6, ncurses-base, ncurses-bin | 修正版未提供 |
 | [CVE-2026-113351](https://security-tracker.debian.org/tracker/CVE-2026-113351) | HIGH | libexpat1 | 修正版未提供 |
 | [CVE-2026-117610](https://security-tracker.debian.org/tracker/CVE-2026-117610) | HIGH | libexpat1 | 修正版未提供 |
 | [CVE-2026-118370](https://security-tracker.debian.org/tracker/CVE-2026-118370) | HIGH | libexpat1 | 修正版未提供 |

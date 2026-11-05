@@ -4,7 +4,7 @@
     "dockerfile": "Dockerfile"
   },
   "remoteUser": "vscode",
-  "postCreateCommand": "bash scripts/verify-env.sh",
+  "postCreateCommand": "bash scripts/show-versions.sh",
   "customizations": {
     "vscode": {
       "extensions": [

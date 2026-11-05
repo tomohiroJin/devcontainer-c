@@ -13,9 +13,9 @@ build:
 # 全テスト実行
 test: build
 	@if [ -z "$(TEST)" ]; then \
-		cd $(BUILD_DIR) && ctest --output-on-failure; \
+		cd $(BUILD_DIR) && ctest --no-tests=error --output-on-failure; \
 	else \
-		cd $(BUILD_DIR) && ctest -R $(TEST) --output-on-failure; \
+		cd $(BUILD_DIR) && ctest -R "$(TEST)" --no-tests=error --output-on-failure; \
 	fi
 
 # クリーンターゲット
