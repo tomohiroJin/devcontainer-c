@@ -1,6 +1,6 @@
 # PR #7 レビュー対応
 
-対象: [レビューコメント](https://github.com/tomohiroJin/devcontainer-c/pull/7#issuecomment-6664551753)。確認日: 2026-11-05。各提案を現在のコード・ビルドコンテキスト・実測結果と照合した。
+対象: [レビューコメント](https://github.com/tomohiroJin/devcontainer-c/pull/7#issuecomment-6664551753)。確認日: 2026-11-06（JST）。各提案を現在のコード・ビルドコンテキスト・実測結果と照合した。
 
 | 指摘番号 | 判断と対応 |
 | --- | --- |
