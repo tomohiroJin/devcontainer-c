@@ -8,7 +8,7 @@ BUILD_DIR = build
 build:
 	mkdir -p $(BUILD_DIR)
 	cmake -S . -B $(BUILD_DIR)
-	cmake --build $(BUILD_DIR) -- -j$(nproc)
+	cmake --build $(BUILD_DIR) -- -j$(shell nproc)
 
 # 全テスト実行
 test: build

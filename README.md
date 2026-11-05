@@ -5,10 +5,10 @@
 
 ## **特徴**
 
-- **Debian bookworm ベース**: OpenSSL 3.x を含む最新の安定パッケージ群で構成。
-- **C++20 対応ツールチェーン**: GCC 12 / Clang 16 をプリインストール。
+- **Debian trixie ベース**: OpenSSL 3.x を含むDebian 安定版のパッケージ群で構成。
+- **C++20 対応ツールチェーン**: GCC 14 / Clang 19 をプリインストール。
 - **CMake のサポート**: ビルドシステムとして CMake (3.20 以上) を使用し、柔軟なビルド構成を提供します。
-- **Google Test の統合**: ユニットテストフレームワーク（v1.15.2 タグで固定）を組み込み、テスト駆動開発をサポートします。
+- **Google Test の統合**: ユニットテストフレームワーク（Debian の libgtest-dev 1.16 系）を組み込み、テスト駆動開発をサポートします。
 - **Boost ライブラリの利用**: 高機能な C++ ライブラリである Boost をインストール済みで、さまざまな機能を簡単に利用できます。
 - **clang-format / clang-tidy 同梱**: フォーマット・静的解析も標準で実行可能。
 - **非 root ユーザー (`vscode`) で起動**: devcontainer のベストプラクティスに準拠。`sudo` は NOPASSWD で利用可能。
@@ -83,10 +83,10 @@ make test TEST=test_factory   # Factory のテストのみ実行
 このプロジェクトは、以下のツールやライブラリに依存しています。
 
 - [CMake](https://cmake.org/) 3.20 以上: ビルドシステム
-- [Google Test](https://github.com/google/googletest) v1.15.2: ユニットテストフレームワーク
+- [Google Test](https://github.com/google/googletest) Debian 1.16 系: ユニットテストフレームワーク
 - [Boost](https://www.boost.org/): C++ ライブラリ
-- GCC 12 / Clang 16 (C++20 対応)
-- clang-format / clang-tidy / cppcheck / lizard / flawfinder（解析系ツール）
+- GCC 14 / Clang 19 (C++20 対応)
+- clang-format / clang-tidy / cppcheck（解析系ツール）
 
 これらは、Dev Container 内で自動的にインストールされます。
 
@@ -95,3 +95,8 @@ make test TEST=test_factory   # Factory のテストのみ実行
 ## **ライセンス**
 
 このプロジェクトは、MIT ライセンスの下で公開されています。詳細は、`LICENSE` ファイルをご覧ください。
+
+## 保守と検証
+
+更新理由・調査元・監査手順は [docs/maintenance.md](docs/maintenance.md) を参照してください。
+`bash scripts/verify-env.sh` で GCC / Clang の両方をビルド・テストします。

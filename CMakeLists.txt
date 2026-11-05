@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(BasicVariables CXX)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -11,7 +12,7 @@ set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(TEST_DIR ${CMAKE_SOURCE_DIR}/tests)
 
 # Boost を検索
-find_package(Boost REQUIRED)
+find_package(Boost CONFIG REQUIRED)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
     message(STATUS "Boost found: ${Boost_INCLUDE_DIRS}")
@@ -20,7 +21,7 @@ else()
 endif()
 
 # GoogleTest を検索
-find_package(GTest REQUIRED)
+find_package(GTest CONFIG REQUIRED)
 if(GTest_FOUND)
     include_directories(${GTEST_INCLUDE_DIRS})
     message(STATUS "GoogleTest found: ${GTEST_INCLUDE_DIRS}")
@@ -46,7 +47,7 @@ list(REMOVE_ITEM TEST_FILES ${TEST_MAIN})
 
 # テスト実行ファイルを作成
 add_executable(test_runner ${TEST_MAIN} ${TEST_FILES})
-target_link_libraries(test_runner PRIVATE basic_variables GTest::GTest GTest::Main pthread ${Boost_LIBRARIES})
+target_link_libraries(test_runner PRIVATE basic_variables GTest::gtest pthread ${Boost_LIBRARIES})
 
 # CTest にテストを登録
 enable_testing()
