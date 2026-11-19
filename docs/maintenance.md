@@ -34,7 +34,7 @@ GitLens、Live Share、日本語パック等の利便性拡張は利用者が任
 
 VS Code の Dev Containers: Rebuild and Reopen in Container を実行。postCreateCommand は `bash scripts/show-versions.sh` で版を表示する。GCC と Clang の configure/build/CTest は `bash scripts/verify-env.sh` を手動または CI で実行する。学習中の意図的なテスト失敗でコンテナ作成を妨げない。手動確認では CMake configure 後の補完・定義ジャンプ、ブレークポイント、保存時整形（.clang-format）、clang-tidy 診断を確認する。Issue #6 の検証項目（補完・デバッグ・保存時整形・静的解析）は、2026-11-20 (Asia/Tokyo) に maintainer から VS Code での確認完了の報告を受けた。
 
-CI は main への push/PR/手動/毎週にイメージをクリーンビルドし、両コンパイラのテストと Trivy の OS/言語パッケージ監査を実行する。全深刻度の JSON、イメージ情報、dpkg一覧を artifact 保存し、未修正を含む深刻度別件数・修正版あり HIGH/CRITICAL 件数・JSON の SHA256・イメージID をログと Job Summary に表示する。同一 ref の旧実行はキャンセルし、実行上限は30分。修正版のある HIGH/CRITICAL は失敗にし、修正未提供も全件レポートに残す。修正版のない残件の一覧と影響評価は security-status.md に記録する。ゲート成功は修正版あり HIGH/CRITICAL が0件であることを示し、未修正を含む脆弱性ゼロを意味しない。
+CI は main への push・PR・手動実行のときにイメージをクリーンビルドし、両コンパイラのテストと Trivy の OS/言語パッケージ監査を実行する。全深刻度の JSON、イメージ情報、dpkg一覧を artifact 保存し、未修正を含む深刻度別件数・修正版あり HIGH/CRITICAL 件数・JSON の SHA256・イメージID をログと Job Summary に表示する。同一 ref の旧実行はキャンセルし、実行上限は30分。修正版のある HIGH/CRITICAL は失敗にし、修正未提供も全件レポートに残す。修正版のない残件の一覧と影響評価は security-status.md に記録する。テスト用のローカルコンテナで頻繁に更新しないため、定期実行はしない。修正版の公開には次の CI 実行で気付けばよいとする。ゲート成功は修正版あり HIGH/CRITICAL が0件であることを示し、未修正を含む脆弱性ゼロを意味しない。
 
 ローカル例:
 
