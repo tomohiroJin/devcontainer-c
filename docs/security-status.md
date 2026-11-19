@@ -49,19 +49,32 @@ python3 scripts/summarize-vulnerabilities.py trivy.json
 - OS は Debian 13.7、234 package。イメージ内の言語固有ファイルは 0。
 - HIGH/CRITICAL は 66 個の CVE に集約される。前回の 50 個から 7 個が外れ、23 個が加わった。
 - 修正版のある HIGH/CRITICAL は 0 件で、CI の失敗ゲートも成功した。未修正はゼロではない。
-- 「修正版未提供」は Trivy の Status に基づく。security-tracker.debian.org はこの環境から到達できず、Debian 側の状態とは照合していない。
+- 「修正版未提供」は Debian security tracker でも確認した（下記「Debian security tracker との照合」）。
 - 手元の生 JSON の SHA256 は `608bd1ecf5ab7f58ae2806b390a9a77b0e6cbc0de3a1112eec89ed8f10d437fe`、ローカル image ID は `sha256:89ae52cde3e72c7721052e41bce07a09976f9e7999ed79aa95e0a2a8687c1642`。CI の値はビルドごとに変わる。
 
 前回から外れた CVE:
 
 | CVE | package | 理由 |
 | --- | --- | --- |
-| [CVE-2026-76844](https://security-tracker.debian.org/tracker/CVE-2026-76844) | zlib1g | 現行 DB では検出なし。更新前の zlib1g でも検出されない。DB から外れた理由は未確認 |
+| [CVE-2026-76844](https://security-tracker.debian.org/tracker/CVE-2026-76844) | zlib1g | 現行 DB では検出なし。Debian tracker の判定は NOT-FOR-US で、実体は webpack-dev-middleware（Node.js）の脆弱性。zlib1g とは無関係で、以前の DB での誤った紐付けが訂正されたとみられる |
 | [CVE-2026-98466](https://security-tracker.debian.org/tracker/CVE-2026-98466)、[CVE-2026-98715](https://security-tracker.debian.org/tracker/CVE-2026-98715)、[CVE-2026-98853](https://security-tracker.debian.org/tracker/CVE-2026-98853)、[CVE-2026-99109](https://security-tracker.debian.org/tracker/CVE-2026-99109) | linux-libc-dev | 現行 DB では検出なし |
 | [CVE-2025-40025](https://security-tracker.debian.org/tracker/CVE-2025-40025) | linux-libc-dev | 深刻度が LOW に再評価 |
 | [CVE-2026-98999](https://security-tracker.debian.org/tracker/CVE-2026-98999) | linux-libc-dev | 深刻度が MEDIUM に再評価 |
 
 新たに加わった 23 個の内訳は Kerberos ライブラリ（libkrb5 系）14、linux-libc-dev 3、git 3、libsqlite3-0 2、libexpat1 1。いずれも監査時点で修正版は未提供。
+
+### Debian security tracker との照合
+
+2026-11-20 (Asia/Tokyo) に security-tracker.debian.org の JSON データ（`/tracker/data/json`）を取得し、66 件の trixie での状態を照合した。
+
+- 66 件すべてが trixie で open（修正版なし）で、Trivy の判定と一致した。
+- うち 22 件は Debian Security Team が no-dsa と判定している。個別のセキュリティ更新（DSA）を出さず、ポイントリリースなどで修正する扱い。
+  - 20 件は「Minor issue」。CRITICAL の libxml2（CVE-2026-6653）も含む。
+  - perl の CVE-2026-9538 は「Minor issue; wait for regressions upstream sorted out」（postponed）。Trivy の fix_deferred と一致する。
+  - acl の CVE-2026-54369 は「Will be fixed first in unstable, then point release update」。
+- 残り 44 件は open で、Debian の対応方針はまだ記載されていない。
+
+no-dsa の CVE は security 更新ではなく Debian のポイントリリースで直る見込みのため、ポイントリリースの公開時にも再ビルドと再検査を行う。
 
 ### 言語依存の監査
 
@@ -95,74 +108,74 @@ python3 scripts/summarize-vulnerabilities.py trivy.json
 | sudo（1） | vscode ユーザーの NOPASSWD sudo | 元々 root 権限を取れるため、権限昇格の CVE で新たに得る権限はない |
 | perl（1）、ncurses（1）、libsystemd0/libudev1（1）、libacl1（1） | 基本ライブラリ。perl の 1 件は Debian が修正を延期（fix_deferred） | 外部入力を直接受けない |
 
-| CVE | 深刻度 | package | 状態 | 前回比 |
-| --- | --- | --- | --- | --- |
-| [CVE-2026-6653](https://security-tracker.debian.org/tracker/CVE-2026-6653) | CRITICAL | libxml2 | 修正版未提供 | 継続 |
-| [CVE-2013-7445](https://security-tracker.debian.org/tracker/CVE-2013-7445) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2019-19449](https://security-tracker.debian.org/tracker/CVE-2019-19449) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2019-19814](https://security-tracker.debian.org/tracker/CVE-2019-19814) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2021-3847](https://security-tracker.debian.org/tracker/CVE-2021-3847) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2021-3864](https://security-tracker.debian.org/tracker/CVE-2021-3864) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2024-21803](https://security-tracker.debian.org/tracker/CVE-2024-21803) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2024-21963](https://security-tracker.debian.org/tracker/CVE-2024-21963) | HIGH | linux-libc-dev | 修正版未提供 | 新規 |
-| [CVE-2024-58015](https://security-tracker.debian.org/tracker/CVE-2024-58015) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2025-69720](https://security-tracker.debian.org/tracker/CVE-2025-69720) | HIGH | libncursesw6, libtinfo6, ncurses-base, ncurses-bin | 修正版未提供 | 継続 |
-| [CVE-2026-0004](https://security-tracker.debian.org/tracker/CVE-2026-0004) | HIGH | linux-libc-dev | 修正版未提供 | 新規 |
-| [CVE-2026-105437](https://security-tracker.debian.org/tracker/CVE-2026-105437) | HIGH | git, git-man | 修正版未提供 | 新規 |
-| [CVE-2026-107364](https://security-tracker.debian.org/tracker/CVE-2026-107364) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-111760](https://security-tracker.debian.org/tracker/CVE-2026-111760) | HIGH | git, git-man | 修正版未提供 | 新規 |
-| [CVE-2026-112315](https://security-tracker.debian.org/tracker/CVE-2026-112315) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-112316](https://security-tracker.debian.org/tracker/CVE-2026-112316) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-112317](https://security-tracker.debian.org/tracker/CVE-2026-112317) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-112318](https://security-tracker.debian.org/tracker/CVE-2026-112318) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-112319](https://security-tracker.debian.org/tracker/CVE-2026-112319) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-112320](https://security-tracker.debian.org/tracker/CVE-2026-112320) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-112321](https://security-tracker.debian.org/tracker/CVE-2026-112321) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-112322](https://security-tracker.debian.org/tracker/CVE-2026-112322) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-112323](https://security-tracker.debian.org/tracker/CVE-2026-112323) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-113351](https://security-tracker.debian.org/tracker/CVE-2026-113351) | HIGH | libexpat1 | 修正版未提供 | 継続 |
-| [CVE-2026-114466](https://security-tracker.debian.org/tracker/CVE-2026-114466) | HIGH | git, git-man | 修正版未提供 | 新規 |
-| [CVE-2026-115506](https://security-tracker.debian.org/tracker/CVE-2026-115506) | HIGH | libexpat1 | 修正版未提供 | 新規 |
-| [CVE-2026-117610](https://security-tracker.debian.org/tracker/CVE-2026-117610) | HIGH | libexpat1 | 修正版未提供 | 継続 |
-| [CVE-2026-118370](https://security-tracker.debian.org/tracker/CVE-2026-118370) | HIGH | libexpat1 | 修正版未提供 | 継続 |
-| [CVE-2026-118380](https://security-tracker.debian.org/tracker/CVE-2026-118380) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-119079](https://security-tracker.debian.org/tracker/CVE-2026-119079) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-119373](https://security-tracker.debian.org/tracker/CVE-2026-119373) | HIGH | libsqlite3-0 | 修正版未提供 | 継続 |
-| [CVE-2026-119374](https://security-tracker.debian.org/tracker/CVE-2026-119374) | HIGH | libsqlite3-0 | 修正版未提供 | 新規 |
-| [CVE-2026-119379](https://security-tracker.debian.org/tracker/CVE-2026-119379) | HIGH | libsqlite3-0 | 修正版未提供 | 新規 |
-| [CVE-2026-12064](https://security-tracker.debian.org/tracker/CVE-2026-12064) | HIGH | curl, libcurl3t64-gnutls, libcurl4t64 | 修正版未提供 | 継続 |
-| [CVE-2026-15308](https://security-tracker.debian.org/tracker/CVE-2026-15308) | HIGH | libpython3.13, libpython3.13-minimal, libpython3.13-stdlib, python3.13, python3.13-minimal | 修正版未提供 | 継続 |
-| [CVE-2026-16742](https://security-tracker.debian.org/tracker/CVE-2026-16742) | HIGH | libsystemd0, libudev1 | 修正版未提供 | 継続 |
-| [CVE-2026-19445](https://security-tracker.debian.org/tracker/CVE-2026-19445) | HIGH | libpython3.13, libpython3.13-minimal, libpython3.13-stdlib, python3.13, python3.13-minimal | 修正版未提供 | 継続 |
-| [CVE-2026-19553](https://security-tracker.debian.org/tracker/CVE-2026-19553) | HIGH | libpython3.13, libpython3.13-minimal, libpython3.13-stdlib, python3.13, python3.13-minimal | 修正版未提供 | 継続 |
-| [CVE-2026-23102](https://security-tracker.debian.org/tracker/CVE-2026-23102) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2026-31568](https://security-tracker.debian.org/tracker/CVE-2026-31568) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2026-46279](https://security-tracker.debian.org/tracker/CVE-2026-46279) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2026-54369](https://security-tracker.debian.org/tracker/CVE-2026-54369) | HIGH | libacl1 | 修正版未提供 | 継続 |
-| [CVE-2026-71199](https://security-tracker.debian.org/tracker/CVE-2026-71199) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-71200](https://security-tracker.debian.org/tracker/CVE-2026-71200) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 |
-| [CVE-2026-72042](https://security-tracker.debian.org/tracker/CVE-2026-72042) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2026-7210](https://security-tracker.debian.org/tracker/CVE-2026-7210) | HIGH | libpython3.13, libpython3.13-minimal, libpython3.13-stdlib, python3.13, python3.13-minimal | 修正版未提供 | 継続 |
-| [CVE-2026-74860](https://security-tracker.debian.org/tracker/CVE-2026-74860) | HIGH | libxml2 | 修正版未提供 | 継続 |
-| [CVE-2026-76642](https://security-tracker.debian.org/tracker/CVE-2026-76642) | HIGH | bsdutils, libblkid1, liblastlog2-2, libmount1, libsmartcols1, libuuid1, login, mount, util-linux | 修正版未提供 | 継続 |
-| [CVE-2026-78408](https://security-tracker.debian.org/tracker/CVE-2026-78408) | HIGH | bsdutils, libblkid1, liblastlog2-2, libmount1, libsmartcols1, libuuid1, login, mount, util-linux | 修正版未提供 | 継続 |
-| [CVE-2026-78409](https://security-tracker.debian.org/tracker/CVE-2026-78409) | HIGH | bsdutils, libblkid1, liblastlog2-2, libmount1, libsmartcols1, libuuid1, login, mount, util-linux | 修正版未提供 | 継続 |
-| [CVE-2026-78410](https://security-tracker.debian.org/tracker/CVE-2026-78410) | HIGH | bsdutils, libblkid1, liblastlog2-2, libmount1, libsmartcols1, libuuid1, login, mount, util-linux | 修正版未提供 | 継続 |
-| [CVE-2026-82049](https://security-tracker.debian.org/tracker/CVE-2026-82049) | HIGH | libpython3.13, libpython3.13-minimal, libpython3.13-stdlib, python3.13, python3.13-minimal | 修正版未提供 | 継続 |
-| [CVE-2026-8458](https://security-tracker.debian.org/tracker/CVE-2026-8458) | HIGH | curl, libcurl3t64-gnutls, libcurl4t64 | 修正版未提供 | 継続 |
-| [CVE-2026-86138](https://security-tracker.debian.org/tracker/CVE-2026-86138) | HIGH | libxml2 | 修正版未提供 | 継続 |
-| [CVE-2026-86139](https://security-tracker.debian.org/tracker/CVE-2026-86139) | HIGH | libxml2 | 修正版未提供 | 継続 |
-| [CVE-2026-86140](https://security-tracker.debian.org/tracker/CVE-2026-86140) | HIGH | libxml2 | 修正版未提供 | 継続 |
-| [CVE-2026-86142](https://security-tracker.debian.org/tracker/CVE-2026-86142) | HIGH | libxml2 | 修正版未提供 | 継続 |
-| [CVE-2026-86143](https://security-tracker.debian.org/tracker/CVE-2026-86143) | HIGH | libxml2 | 修正版未提供 | 継続 |
-| [CVE-2026-86144](https://security-tracker.debian.org/tracker/CVE-2026-86144) | HIGH | libxml2 | 修正版未提供 | 継続 |
-| [CVE-2026-89675](https://security-tracker.debian.org/tracker/CVE-2026-89675) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2026-90315](https://security-tracker.debian.org/tracker/CVE-2026-90315) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2026-9538](https://security-tracker.debian.org/tracker/CVE-2026-9538) | HIGH | libperl5.40, perl, perl-base, perl-modules-5.40 | Debian が修正を延期 (fix_deferred) | 継続 |
-| [CVE-2026-96512](https://security-tracker.debian.org/tracker/CVE-2026-96512) | HIGH | sudo | 修正版未提供 | 継続 |
-| [CVE-2026-98118](https://security-tracker.debian.org/tracker/CVE-2026-98118) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2026-98364](https://security-tracker.debian.org/tracker/CVE-2026-98364) | HIGH | linux-libc-dev | 修正版未提供 | 継続 |
-| [CVE-2026-99272](https://security-tracker.debian.org/tracker/CVE-2026-99272) | HIGH | linux-libc-dev | 修正版未提供 | 新規 |
+| CVE | 深刻度 | package | 状態 | 前回比 | Debian（trixie） |
+| --- | --- | --- | --- | --- | --- |
+| [CVE-2026-6653](https://security-tracker.debian.org/tracker/CVE-2026-6653) | CRITICAL | libxml2 | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2013-7445](https://security-tracker.debian.org/tracker/CVE-2013-7445) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2019-19449](https://security-tracker.debian.org/tracker/CVE-2019-19449) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2019-19814](https://security-tracker.debian.org/tracker/CVE-2019-19814) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2021-3847](https://security-tracker.debian.org/tracker/CVE-2021-3847) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2021-3864](https://security-tracker.debian.org/tracker/CVE-2021-3864) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2024-21803](https://security-tracker.debian.org/tracker/CVE-2024-21803) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2024-21963](https://security-tracker.debian.org/tracker/CVE-2024-21963) | HIGH | linux-libc-dev | 修正版未提供 | 新規 | open |
+| [CVE-2024-58015](https://security-tracker.debian.org/tracker/CVE-2024-58015) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2025-69720](https://security-tracker.debian.org/tracker/CVE-2025-69720) | HIGH | libncursesw6, libtinfo6, ncurses-base, ncurses-bin | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-0004](https://security-tracker.debian.org/tracker/CVE-2026-0004) | HIGH | linux-libc-dev | 修正版未提供 | 新規 | open |
+| [CVE-2026-105437](https://security-tracker.debian.org/tracker/CVE-2026-105437) | HIGH | git, git-man | 修正版未提供 | 新規 | open |
+| [CVE-2026-107364](https://security-tracker.debian.org/tracker/CVE-2026-107364) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-111760](https://security-tracker.debian.org/tracker/CVE-2026-111760) | HIGH | git, git-man | 修正版未提供 | 新規 | open |
+| [CVE-2026-112315](https://security-tracker.debian.org/tracker/CVE-2026-112315) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-112316](https://security-tracker.debian.org/tracker/CVE-2026-112316) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-112317](https://security-tracker.debian.org/tracker/CVE-2026-112317) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-112318](https://security-tracker.debian.org/tracker/CVE-2026-112318) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-112319](https://security-tracker.debian.org/tracker/CVE-2026-112319) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-112320](https://security-tracker.debian.org/tracker/CVE-2026-112320) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-112321](https://security-tracker.debian.org/tracker/CVE-2026-112321) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-112322](https://security-tracker.debian.org/tracker/CVE-2026-112322) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-112323](https://security-tracker.debian.org/tracker/CVE-2026-112323) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-113351](https://security-tracker.debian.org/tracker/CVE-2026-113351) | HIGH | libexpat1 | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-114466](https://security-tracker.debian.org/tracker/CVE-2026-114466) | HIGH | git, git-man | 修正版未提供 | 新規 | open |
+| [CVE-2026-115506](https://security-tracker.debian.org/tracker/CVE-2026-115506) | HIGH | libexpat1 | 修正版未提供 | 新規 | open（no-dsa: minor） |
+| [CVE-2026-117610](https://security-tracker.debian.org/tracker/CVE-2026-117610) | HIGH | libexpat1 | 修正版未提供 | 継続 | open |
+| [CVE-2026-118370](https://security-tracker.debian.org/tracker/CVE-2026-118370) | HIGH | libexpat1 | 修正版未提供 | 継続 | open |
+| [CVE-2026-118380](https://security-tracker.debian.org/tracker/CVE-2026-118380) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-119079](https://security-tracker.debian.org/tracker/CVE-2026-119079) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-119373](https://security-tracker.debian.org/tracker/CVE-2026-119373) | HIGH | libsqlite3-0 | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-119374](https://security-tracker.debian.org/tracker/CVE-2026-119374) | HIGH | libsqlite3-0 | 修正版未提供 | 新規 | open（no-dsa: minor） |
+| [CVE-2026-119379](https://security-tracker.debian.org/tracker/CVE-2026-119379) | HIGH | libsqlite3-0 | 修正版未提供 | 新規 | open（no-dsa: minor） |
+| [CVE-2026-12064](https://security-tracker.debian.org/tracker/CVE-2026-12064) | HIGH | curl, libcurl3t64-gnutls, libcurl4t64 | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-15308](https://security-tracker.debian.org/tracker/CVE-2026-15308) | HIGH | libpython3.13, libpython3.13-minimal, libpython3.13-stdlib, python3.13, python3.13-minimal | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-16742](https://security-tracker.debian.org/tracker/CVE-2026-16742) | HIGH | libsystemd0, libudev1 | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-19445](https://security-tracker.debian.org/tracker/CVE-2026-19445) | HIGH | libpython3.13, libpython3.13-minimal, libpython3.13-stdlib, python3.13, python3.13-minimal | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-19553](https://security-tracker.debian.org/tracker/CVE-2026-19553) | HIGH | libpython3.13, libpython3.13-minimal, libpython3.13-stdlib, python3.13, python3.13-minimal | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-23102](https://security-tracker.debian.org/tracker/CVE-2026-23102) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2026-31568](https://security-tracker.debian.org/tracker/CVE-2026-31568) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2026-46279](https://security-tracker.debian.org/tracker/CVE-2026-46279) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2026-54369](https://security-tracker.debian.org/tracker/CVE-2026-54369) | HIGH | libacl1 | 修正版未提供 | 継続 | open（no-dsa: point release で修正予定） |
+| [CVE-2026-71199](https://security-tracker.debian.org/tracker/CVE-2026-71199) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-71200](https://security-tracker.debian.org/tracker/CVE-2026-71200) | HIGH | libgssapi-krb5-2, libk5crypto3, libkrb5-3, libkrb5support0 | 修正版未提供 | 新規 | open |
+| [CVE-2026-72042](https://security-tracker.debian.org/tracker/CVE-2026-72042) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2026-7210](https://security-tracker.debian.org/tracker/CVE-2026-7210) | HIGH | libpython3.13, libpython3.13-minimal, libpython3.13-stdlib, python3.13, python3.13-minimal | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-74860](https://security-tracker.debian.org/tracker/CVE-2026-74860) | HIGH | libxml2 | 修正版未提供 | 継続 | open |
+| [CVE-2026-76642](https://security-tracker.debian.org/tracker/CVE-2026-76642) | HIGH | bsdutils, libblkid1, liblastlog2-2, libmount1, libsmartcols1, libuuid1, login, mount, util-linux | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-78408](https://security-tracker.debian.org/tracker/CVE-2026-78408) | HIGH | bsdutils, libblkid1, liblastlog2-2, libmount1, libsmartcols1, libuuid1, login, mount, util-linux | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-78409](https://security-tracker.debian.org/tracker/CVE-2026-78409) | HIGH | bsdutils, libblkid1, liblastlog2-2, libmount1, libsmartcols1, libuuid1, login, mount, util-linux | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-78410](https://security-tracker.debian.org/tracker/CVE-2026-78410) | HIGH | bsdutils, libblkid1, liblastlog2-2, libmount1, libsmartcols1, libuuid1, login, mount, util-linux | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-82049](https://security-tracker.debian.org/tracker/CVE-2026-82049) | HIGH | libpython3.13, libpython3.13-minimal, libpython3.13-stdlib, python3.13, python3.13-minimal | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-8458](https://security-tracker.debian.org/tracker/CVE-2026-8458) | HIGH | curl, libcurl3t64-gnutls, libcurl4t64 | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-86138](https://security-tracker.debian.org/tracker/CVE-2026-86138) | HIGH | libxml2 | 修正版未提供 | 継続 | open |
+| [CVE-2026-86139](https://security-tracker.debian.org/tracker/CVE-2026-86139) | HIGH | libxml2 | 修正版未提供 | 継続 | open |
+| [CVE-2026-86140](https://security-tracker.debian.org/tracker/CVE-2026-86140) | HIGH | libxml2 | 修正版未提供 | 継続 | open |
+| [CVE-2026-86142](https://security-tracker.debian.org/tracker/CVE-2026-86142) | HIGH | libxml2 | 修正版未提供 | 継続 | open |
+| [CVE-2026-86143](https://security-tracker.debian.org/tracker/CVE-2026-86143) | HIGH | libxml2 | 修正版未提供 | 継続 | open |
+| [CVE-2026-86144](https://security-tracker.debian.org/tracker/CVE-2026-86144) | HIGH | libxml2 | 修正版未提供 | 継続 | open |
+| [CVE-2026-89675](https://security-tracker.debian.org/tracker/CVE-2026-89675) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2026-90315](https://security-tracker.debian.org/tracker/CVE-2026-90315) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2026-9538](https://security-tracker.debian.org/tracker/CVE-2026-9538) | HIGH | libperl5.40, perl, perl-base, perl-modules-5.40 | Debian が修正を延期 (fix_deferred) | 継続 | open（no-dsa: postponed） |
+| [CVE-2026-96512](https://security-tracker.debian.org/tracker/CVE-2026-96512) | HIGH | sudo | 修正版未提供 | 継続 | open（no-dsa: minor） |
+| [CVE-2026-98118](https://security-tracker.debian.org/tracker/CVE-2026-98118) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2026-98364](https://security-tracker.debian.org/tracker/CVE-2026-98364) | HIGH | linux-libc-dev | 修正版未提供 | 継続 | open |
+| [CVE-2026-99272](https://security-tracker.debian.org/tracker/CVE-2026-99272) | HIGH | linux-libc-dev | 修正版未提供 | 新規 | open |
 
 ## 初回監査の記録（2026-11-05）
 
