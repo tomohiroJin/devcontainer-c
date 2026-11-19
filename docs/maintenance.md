@@ -45,7 +45,7 @@ trivy image --image-src docker --scanners vuln --format json --output trivy.json
 trivy image --image-src docker --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 devcontainer-c:audit
 ```
 
-ビルド proxy のカスタム CA が必要な環境では `--secret id=proxy_ca,src=/path/to/combined-ca.pem` を渡す。証明書はイメージに保存しない。
+ビルド proxy のカスタム CA が必要な環境では `--secret id=proxy_ca,src=/path/to/combined-ca.pem` を渡す。証明書はイメージに保存しない。apt の取得処理は非特権ユーザーで動くため、secret は `mode=0444` でその RUN の間だけマウントする。
 
 CI Actions は公式 release の commit SHA に固定: [checkout v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1)、[upload-artifact v7.0.2](https://github.com/actions/upload-artifact/releases/tag/v7.0.2)、[trivy-action v0.36.0](https://github.com/aquasecurity/trivy-action/releases/tag/v0.36.0)。Trivy scanner は検証と同じ v0.76.2 を明示指定し、毎週の保守時に scanner 自体の更新も確認する。新規導入時に GitHub API の release/tag で確認した。GoogleTest の upstream 比較元は [latest release](https://github.com/google/googletest/releases/latest)。
 

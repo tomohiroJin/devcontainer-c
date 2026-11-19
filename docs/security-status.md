@@ -13,7 +13,7 @@
 - apt upgrade でベースの `zlib1g` が Debian security 更新 `1:1.3.dfsg+really1.3.1-1+deb13u1` に更新された。この更新は CVE-2026-27171（MEDIUM）と CVE-2026-85091（HIGH）を修正する。
 - GCC 14.2.0 / Clang 19.1.7 の configure/build/CTest は各 50/50 成功（`scripts/verify-env.sh`）。
 
-無改変の Dockerfile によるクリーンビルドは CI で成功している。手元ビルドは、セッションのネットワーク制約のため Dockerfile のコピーを 2 か所だけ変えて実行した。apt の取得先を https にし、proxy CA secret を `mode=0444` で渡した。導入パッケージの指定は同一で、package 数も CI と同じ 234。
+無改変の Dockerfile によるクリーンビルドは CI で成功している。手元ビルドは、セッションのネットワーク制約のため Dockerfile のコピーを 2 か所だけ変えて実行した。apt の取得先を https にし、proxy CA secret を `mode=0444` で渡した。導入パッケージの指定は同一で、package 数も CI と同じ 234。このとき見つかった「secret の既定権限では apt が CA を読めない」問題は、Dockerfile の secret マウントを `mode=0444` にして修正した。修正後は https 化だけで手元ビルドが通ることを確認した。
 
 ```sh
 docker pull mirror.gcr.io/library/debian@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2
