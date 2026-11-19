@@ -6,7 +6,8 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 # Optional CA bundle for managed build proxies; never persisted in an image layer.
-RUN --mount=type=secret,id=proxy_ca \
+# mode=0444 lets apt's unprivileged _apt fetcher read it during this RUN only.
+RUN --mount=type=secret,id=proxy_ca,mode=0444 \
     set -eu; \
     if [ -f /run/secrets/proxy_ca ]; then \
       export SSL_CERT_FILE=/run/secrets/proxy_ca; \

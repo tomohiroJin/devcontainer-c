@@ -1,7 +1,7 @@
 # 開発環境の保守
 
 調査日: 2026-11-05 (Asia/Tokyo)。対象: Issue #6、開始時 HEAD `58239e664b19136f31a8eb557b8bdf8db1f22be5`。
-再確認日: 2026-11-19 (Asia/Tokyo)。対象: main `786c0e51bde3a6a6f5e0d361294c358bbcd8e83a`。結果は [security-status.md](security-status.md) に記録。
+再確認日: 2026-11-20 (Asia/Tokyo)。対象: main `786c0e51bde3a6a6f5e0d361294c358bbcd8e83a`。結果は [security-status.md](security-status.md) に記録。
 
 ## 更新方針
 
@@ -32,24 +32,24 @@ GitLens、Live Share、日本語パック等の利便性拡張は利用者が任
 
 ## 再現と監査
 
-VS Code の Dev Containers: Rebuild and Reopen in Container を実行。postCreateCommand は `bash scripts/show-versions.sh` で版を表示する。GCC と Clang の configure/build/CTest は `bash scripts/verify-env.sh` を手動または CI で実行する。学習中の意図的なテスト失敗でコンテナ作成を妨げない。手動確認では CMake configure 後の補完・定義ジャンプ、ブレークポイント、保存時整形（.clang-format）、clang-tidy 診断を確認する。2026-11-19 に maintainer が VS Code 上でこれらを確認済み。
+VS Code の Dev Containers: Rebuild and Reopen in Container を実行。postCreateCommand は `bash scripts/show-versions.sh` で版を表示する。GCC と Clang の configure/build/CTest は `bash scripts/verify-env.sh` を手動または CI で実行する。学習中の意図的なテスト失敗でコンテナ作成を妨げない。手動確認では CMake configure 後の補完・定義ジャンプ、ブレークポイント、保存時整形（.clang-format）、clang-tidy 診断を確認する。Issue #6 の検証項目（補完・デバッグ・保存時整形・静的解析）は、2026-11-20 (Asia/Tokyo) に maintainer から VS Code での確認完了の報告を受けた。
 
-CI は main への push/PR/手動/毎週にイメージをクリーンビルドし、両コンパイラのテストと Trivy の OS/言語パッケージ監査を実行する。全深刻度の JSON、イメージ情報、dpkg一覧を artifact 保存し、未修正を含む深刻度別件数・修正版あり HIGH/CRITICAL 件数・JSON の SHA256・イメージID をログと Job Summary に表示する。同一 ref の旧実行はキャンセルし、実行上限は30分。修正版のある HIGH/CRITICAL は失敗にし、修正未提供も全件レポートに残す。残件は CVE・影響・回避策・担当・期限を既存 Issue #6 と security-status.md で追跡する。ゲート成功は修正版あり HIGH/CRITICAL が0件であることを示し、未修正を含む脆弱性ゼロを意味しない。
+CI は main への push/PR/手動/毎週にイメージをクリーンビルドし、両コンパイラのテストと Trivy の OS/言語パッケージ監査を実行する。全深刻度の JSON、イメージ情報、dpkg一覧を artifact 保存し、未修正を含む深刻度別件数・修正版あり HIGH/CRITICAL 件数・JSON の SHA256・イメージID をログと Job Summary に表示する。同一 ref の旧実行はキャンセルし、実行上限は30分。修正版のある HIGH/CRITICAL は失敗にし、修正未提供も全件レポートに残す。残件は CVE・影響・回避策・担当・期限を [Issue #9](https://github.com/tomohiroJin/devcontainer-c/issues/9) と security-status.md で追跡する。ゲート成功は修正版あり HIGH/CRITICAL が0件であることを示し、未修正を含む脆弱性ゼロを意味しない。
 
 ローカル例:
 
 ```sh
 docker build --pull -t devcontainer-c:audit .devcontainer
 docker run --rm -v "$PWD:/workspace" -w /workspace devcontainer-c:audit bash scripts/verify-env.sh
-trivy image --scanners vuln --format json --output trivy.json devcontainer-c:audit
-trivy image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 devcontainer-c:audit
+trivy image --image-src docker --scanners vuln --format json --output trivy.json devcontainer-c:audit
+trivy image --image-src docker --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 devcontainer-c:audit
 ```
 
-ビルド proxy のカスタム CA が必要な環境では `--secret id=proxy_ca,src=/path/to/combined-ca.pem` を渡す。証明書はイメージに保存しない。
+ビルド proxy のカスタム CA が必要な環境では `--secret id=proxy_ca,src=/path/to/combined-ca.pem` を渡す。証明書はイメージに保存しない。apt の取得処理は非特権ユーザーで動くため、secret は `mode=0444` でその RUN の間だけマウントする。
 
 CI Actions は公式 release の commit SHA に固定: [checkout v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1)、[upload-artifact v7.0.2](https://github.com/actions/upload-artifact/releases/tag/v7.0.2)、[trivy-action v0.36.0](https://github.com/aquasecurity/trivy-action/releases/tag/v0.36.0)。Trivy scanner は検証と同じ v0.76.2 を明示指定し、毎週の保守時に scanner 自体の更新も確認する。新規導入時に GitHub API の release/tag で確認した。GoogleTest の upstream 比較元は [latest release](https://github.com/google/googletest/releases/latest)。
 
-言語パッケージのマニフェストやロックファイルはリポジトリにないため、OSV-Scanner は現時点で検査対象がない。C/C++ の依存は Debian パッケージとして Trivy で検査する。npm・pip・Conan・vcpkg などを導入した時点で OSV-Scanner を CI に追加し、Dependabot にも該当エコシステムを加える。
+言語パッケージのマニフェストやロックファイルはリポジトリにないため、言語依存について OSV-Scanner で検査する対象は現時点でない。C/C++ の依存は Debian パッケージとして Trivy で検査する。npm・pip・Conan・vcpkg などを導入した時点で OSV-Scanner を CI に追加し、Dependabot にも該当エコシステムを加える。
 
 実行済み検証・最終イメージの監査結果・残件は [security-status.md](security-status.md) に記録。
 
