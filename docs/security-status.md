@@ -1,10 +1,10 @@
 # 検証結果と残存脆弱性
 
-最終再確認日: 2026-11-20 (Asia/Tokyo)。作業は 2026-11-19 15:30〜15:50 UTC。対象コミット: `786c0e51bde3a6a6f5e0d361294c358bbcd8e83a`（PR #7 マージ後の main）。残件の追跡: [Issue #9](https://github.com/tomohiroJin/devcontainer-c/issues/9)。環境更新の作業 Issue: [#6](https://github.com/tomohiroJin/devcontainer-c/issues/6)。
+最終再確認日: 2026-11-20 (Asia/Tokyo)。作業は 2026-11-19 15:30〜15:50 UTC。対象コミット: `786c0e51bde3a6a6f5e0d361294c358bbcd8e83a`（PR #7 マージ後の main）。環境更新の作業 Issue: [#6](https://github.com/tomohiroJin/devcontainer-c/issues/6)。
 
 ## 2026-11-20 の再確認
 
-前回の確認期限 2026-11-12 を過ぎたため、マージ後の main で再確認した。手元の再ビルドと、同時刻の main CI（[run 44555632184](https://github.com/tomohiroJin/devcontainer-c/actions/runs/44555632184)）の両方で検査した。CI ログに出る集計値（深刻度別件数、合計、ユニーク ID 数、修正版あり件数）は一致した。CI の生 JSON はこの環境から取得できず、CVE 単位の突き合わせはしていない。
+PR #7 マージ後の main で再確認した。手元の再ビルドと、同時刻の main CI（[run 44555632184](https://github.com/tomohiroJin/devcontainer-c/actions/runs/44555632184)）の両方で検査した。CI ログに出る集計値（深刻度別件数、合計、ユニーク ID 数、修正版あり件数）は一致した。CI の生 JSON はこの環境から取得できず、CVE 単位の突き合わせはしていない。
 
 ### ビルドとテスト
 
@@ -74,7 +74,7 @@ python3 scripts/summarize-vulnerabilities.py trivy.json
   - acl の CVE-2026-54369 は「Will be fixed first in unstable, then point release update」。
 - 残り 44 件は open で、Debian の対応方針はまだ記載されていない。
 
-no-dsa の CVE は security 更新ではなく Debian のポイントリリースで直る見込みのため、ポイントリリースの公開時にも再ビルドと再検査を行う。
+no-dsa の CVE は、security 更新ではなく Debian のポイントリリースで直る見込み。
 
 ### 言語依存の監査
 
@@ -86,13 +86,13 @@ no-dsa の CVE は security 更新ではなく Debian のポイントリリー�
 
 ## 残件の扱い
 
-以下全行の担当: Repository maintainer (`tomohiroJin`)。次回確認期限: **2026-11-26**。追跡先: **[Issue #9](https://github.com/tomohiroJin/devcontainer-c/issues/9)**。毎週月曜の CI（初回の定期実行は 2026-11-23）で再検査し、Debian security 更新が出た時点で再ビルドする。例外の恒久除外やリスク受容を行ったものではない。
+以下は 2026-11-20 時点で修正版のない HIGH/CRITICAL の一覧。個別の追跡 Issue や確認期限は設けない。CI の Trivy ゲートは修正版のある HIGH/CRITICAL が出ると失敗するため、CI が失敗したときに再ビルドして対応する。恒久的な除外設定はしていない。
 
 暫定運用: 開発専用・非 root のコンテナで利用し、ホストの秘密情報や本番資格情報をマウントしない。深刻度は検知元の判定であり、全件がこのサンプルコードから到達可能だと断定しない。
 
 ### パッケージ別の影響評価
 
-コンテナ内の依存関係（`apt-cache rdepends --installed`）から見た利用経路の評価。各 CVE の詳細な到達性は、Debian tracker とベンダー情報で Issue #9 にて確認を続ける。
+コンテナ内の依存関係（`apt-cache rdepends --installed`）から見た利用経路の評価。各 CVE の詳細な到達性までは確認していない。
 
 | package（CVE 数） | 利用経路 | 影響と回避策 |
 | --- | --- | --- |
