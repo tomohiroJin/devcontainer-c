@@ -1,0 +1,56 @@
+name: Build and security
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '25 3 * * 1'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build development image
+        run: docker build --pull -t devcontainer-c:audit .devcontainer
+      - name: Test both compilers
+        run: docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/workspace" -w /workspace devcontainer-c:audit bash scripts/verify-env.sh
+      - name: Save installed versions and image identity
+        run: |
+          docker image inspect devcontainer-c:audit > image-inspect.json
+          docker run --rm devcontainer-c:audit dpkg-query -W > packages.txt
+      - name: Audit OS and language packages
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          version: v0.76.2
+          image-ref: devcontainer-c:audit
+          scanners: vuln
+          format: json
+          output: trivy.json
+          severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+          exit-code: '0'
+      - name: Summarize all vulnerability findings
+        run: python3 scripts/summarize-vulnerabilities.py trivy.json
+      - name: Fail on fixable high severity vulnerabilities
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          version: v0.76.2
+          image-ref: devcontainer-c:audit
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: security-evidence
+          path: |
+            trivy.json
+            image-inspect.json
+            packages.txt

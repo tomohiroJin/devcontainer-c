@@ -8,14 +8,14 @@ BUILD_DIR = build
 build:
 	mkdir -p $(BUILD_DIR)
 	cmake -S . -B $(BUILD_DIR)
-	cmake --build $(BUILD_DIR) -- -j$(nproc)
+	cmake --build $(BUILD_DIR) -- -j$(shell nproc)
 
 # 全テスト実行
 test: build
 	@if [ -z "$(TEST)" ]; then \
-		cd $(BUILD_DIR) && ctest --output-on-failure; \
+		cd $(BUILD_DIR) && ctest --no-tests=error --output-on-failure; \
 	else \
-		cd $(BUILD_DIR) && ctest -R $(TEST) --output-on-failure; \
+		cd $(BUILD_DIR) && ctest -R "$(TEST)" --no-tests=error --output-on-failure; \
 	fi
 
 # クリーンターゲット

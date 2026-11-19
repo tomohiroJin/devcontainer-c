@@ -56,3 +56,5 @@ build
 
 # testing directory
 Testing
+build-*/
+trivy.json

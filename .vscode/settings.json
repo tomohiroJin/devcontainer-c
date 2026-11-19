@@ -1,60 +1,15 @@
 {
-  "cSpell.words": [
-    "CEINTL",
-    "cppcheck",
-    "cpptools",
-    "cschlosser",
-    "ctest",
-    "DCMAKE",
-    "dkms",
-    "donjayamanne",
-    "doxdocgen",
-    "dylib",
-    "eamodio",
-    "errorlens",
-    "Expt",
-    "flawfinder",
-    "flylint",
-    "githistory",
-    "googletest",
-    "GTEST",
-    "jbenden",
-    "kohler",
-    "libboost",
-    "libgtest",
-    "mechatroner",
-    "mhutchie",
-    "Mkfile",
-    "mosapride",
-    "oderwat",
-    "pyyaml",
-    "setuptools",
-    "shardulm",
-    "symvers",
-    "tomohiro",
-    "usernamehw",
-    "vscodeintellicode",
-    "wayou",
-    "zenkaku"
-  ],
-  "c-cpp-flylint.flexelint.enable": false,
-  "c-cpp-flylint.cppcheck.enable": false,
-  "c-cpp-flylint.clang.enable": false,
-  "c-cpp-flylint.lizard.enable": true,
-  "c-cpp-flylint.flawfinder.enable": true,
-  "c-cpp-flylint.includePaths": [
-    "/usr/include",
-    "/usr/include/gtest",
-    "/usr/include/boost",
-    "${workspaceFolder}/*"
-  ],
-  "C_Cpp.default.compilerPath": "/usr/bin/clang++",
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
   "C_Cpp.default.cppStandard": "c++20",
+  "C_Cpp.clang_format_path": "/usr/bin/clang-format",
+  "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+  "C_Cpp.codeAnalysis.clangTidy.path": "/usr/bin/clang-tidy",
+  "cmake.configureOnOpen": true,
   "editor.formatOnSave": true,
   "[cpp]": {
-    "editor.defaultFormatter": "xaver.clang-format"
+    "editor.defaultFormatter": "ms-vscode.cpptools"
   },
   "[c]": {
-    "editor.defaultFormatter": "xaver.clang-format"
+    "editor.defaultFormatter": "ms-vscode.cpptools"
   }
 }
